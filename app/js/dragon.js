@@ -2,12 +2,26 @@
 class Segment {
 	constructor(image, startXPosition, startYPosition) {
 		this.image = image;
+		this.colour = color(0,0,0);
+
 		this.xPosition = startXPosition;
 		this.yPosition = startYPosition;
+
+		this.width = 50;
+		this.height = 50;
+
+		// any number between 0 and 1
+		this.elasticity = 0.0;
+
+		// 1 unit is the diameter of a segment
+		this.maxStretch = 1.1;
+		this.maxContract = 1;
 	}
 
 	draw() {
-		ellipse(this.xPosition, this.yPosition, 50, 50);
+		fill(this.colour);
+		ellipse(this.xPosition, this.yPosition, this.width, this.height);
+		fill(255);
 	}
 
 	//move in the direction of the next segment.
@@ -18,8 +32,24 @@ class Segment {
 		let diffX = nextX - this.xPosition;
 		let diffY = nextY - this.yPosition;
 
-		this.xPosition += (diffX/10);
-		this.yPosition += (diffY/10);
+		let squareDistance = Math.pow(diffX, 2) + Math.pow( diffY, 2);
+		let modalDistance = Math.sqrt(squareDistance);
+		let distanceInSegments = modalDistance/this.width;
+
+
+		if (distanceInSegments > this.maxStretch){
+			// compensate for overstretch on the x and y axis proportionally
+			let overDistance = distanceInSegments - this.maxStretch;
+			let overDistanceProportion = overDistance / distanceInSegments;
+			let overDistanceX = diffX * overDistanceProportion;
+			let overDistanceY = diffY * overDistanceProportion;
+
+			this.xPosition += overDistanceX;
+			this.yPosition += overDistanceY;
+		}
+
+		this.xPosition += (diffX * this.elasticity);
+		this.yPosition += (diffY * this.elasticity);
 	}
 
 	setNextSegment(seg) {
