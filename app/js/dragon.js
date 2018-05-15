@@ -14,8 +14,12 @@ class Segment {
 	move() {
 		let nextX = this.nextSegment.xPosition;
 		let nextY = this.nextSegment.yPosition;
-		this.xPosition = nextX + 50;
-		this.yPosition = nextY;	
+
+		let diffX = nextX - this.xPosition;
+		let diffY = nextY - this.yPosition;
+
+		this.xPosition += (diffX/10);
+		this.yPosition += (diffY/10);
 	}
 
 	setNextSegment(seg) {
